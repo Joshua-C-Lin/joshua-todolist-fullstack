@@ -88,8 +88,7 @@ onMounted(loadTodos)
     <section class="todo-panel" aria-labelledby="page-title">
       <header class="todo-header">
         <div>
-          <p class="eyebrow">Vue 3 + Java REST</p>
-          <h1 id="page-title">Joshua Todo List</h1>
+          <h1 id="page-title">JP 留言板</h1>
         </div>
         <button class="ghost-button" type="button" :disabled="isLoading" @click="loadTodos">
           重新整理
