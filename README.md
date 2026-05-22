@@ -72,11 +72,11 @@ The Vite dev server proxies `/api` requests to `http://localhost:8080`.
 
 ## Deploy Backend to Render
 
-Create a Render `Web Service` for the Java backend.
+Create a Render `Web Service` for the Java backend and use Docker runtime.
 
 - Root Directory: `backend`
-- Build Command: `mkdir -p out && javac -d out src/main/java/com/example/todolist/Main.java`
-- Start Command: `java -cp out com.example.todolist.Main`
+- Runtime: `Docker`
+- Dockerfile Path: `./Dockerfile`
 
 Environment variables:
 
