@@ -70,6 +70,20 @@ The frontend runs at `http://localhost:5173`.
 
 The Vite dev server proxies `/api` requests to `http://localhost:8080`.
 
+## Deploy Frontend to Vercel
+
+Deploy the `frontend` directory as a Vite app.
+
+- Root Directory: `frontend`
+- Build Command: `npm run build`
+- Output Directory: `dist`
+
+Environment variables:
+
+```text
+VITE_API_BASE_URL=https://your-render-backend-domain.onrender.com
+```
+
 ## Deploy Backend to Render
 
 Create a Render `Web Service` for the Java backend and use Docker runtime.
