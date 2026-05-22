@@ -30,6 +30,7 @@ This is a small full-stack todo list example:
 ```bash
 SUPABASE_URL=https://your-project-ref.supabase.co
 SUPABASE_KEY=your-publishable-anon-secret-or-service-role-key
+CORS_ALLOWED_ORIGIN=http://localhost:5173
 ```
 
 You can also export the same names as environment variables. Exported values take precedence over `backend/.env`.
@@ -68,3 +69,21 @@ npm run dev
 The frontend runs at `http://localhost:5173`.
 
 The Vite dev server proxies `/api` requests to `http://localhost:8080`.
+
+## Deploy Backend to Render
+
+Create a Render `Web Service` for the Java backend.
+
+- Root Directory: `backend`
+- Build Command: `mkdir -p out && javac -d out src/main/java/com/example/todolist/Main.java`
+- Start Command: `java -cp out com.example.todolist.Main`
+
+Environment variables:
+
+```text
+SUPABASE_URL=https://your-project-ref.supabase.co
+SUPABASE_KEY=your-publishable-anon-secret-or-service-role-key
+CORS_ALLOWED_ORIGIN=https://your-vercel-frontend-domain.vercel.app
+```
+
+Render provides `PORT` automatically. The backend uses that value when present and falls back to `8080` for local development.

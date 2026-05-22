@@ -24,7 +24,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Main {
-    private static final int PORT = 8080;
+    private static final Map<String, String> DOT_ENV = loadDotEnv(Path.of("backend/.env"));
+    private static final int PORT = parsePort(configValue("PORT"), 8080);
+    private static final String CORS_ALLOWED_ORIGIN = configValue("CORS_ALLOWED_ORIGIN", "http://localhost:5173");
     private static final TodoRepository REPOSITORY = createRepository();
 
     public static void main(String[] args) throws IOException {
@@ -38,9 +40,8 @@ public class Main {
     }
 
     private static TodoRepository createRepository() {
-        Map<String, String> dotEnv = loadDotEnv(Path.of("backend/.env"));
-        String supabaseUrl = configValue("SUPABASE_URL", dotEnv);
-        String supabaseKey = configValue("SUPABASE_KEY", dotEnv);
+        String supabaseUrl = configValue("SUPABASE_URL");
+        String supabaseKey = configValue("SUPABASE_KEY");
 
         if (isBlank(supabaseUrl) || isBlank(supabaseKey)) {
             return new InMemoryTodoRepository();
@@ -49,12 +50,32 @@ public class Main {
         return new SupabaseTodoRepository(supabaseUrl, supabaseKey);
     }
 
-    private static String configValue(String key, Map<String, String> dotEnv) {
+    private static String configValue(String key) {
+        return configValue(key, null);
+    }
+
+    private static String configValue(String key, String defaultValue) {
         String value = System.getenv(key);
         if (!isBlank(value)) {
             return value;
         }
-        return dotEnv.get(key);
+        return DOT_ENV.getOrDefault(key, defaultValue);
+    }
+
+    private static int parsePort(String value, int defaultPort) {
+        if (isBlank(value)) {
+            return defaultPort;
+        }
+
+        try {
+            int port = Integer.parseInt(value);
+            if (port <= 0 || port > 65535) {
+                throw new IllegalArgumentException("PORT must be between 1 and 65535");
+            }
+            return port;
+        } catch (NumberFormatException exception) {
+            throw new IllegalArgumentException("PORT must be a number", exception);
+        }
     }
 
     private static Map<String, String> loadDotEnv(Path path) {
@@ -309,7 +330,7 @@ public class Main {
     }
 
     private static void addCorsHeaders(HttpExchange exchange) {
-        exchange.getResponseHeaders().set("Access-Control-Allow-Origin", "http://localhost:5173");
+        exchange.getResponseHeaders().set("Access-Control-Allow-Origin", CORS_ALLOWED_ORIGIN);
         exchange.getResponseHeaders().set("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
         exchange.getResponseHeaders().set("Access-Control-Allow-Headers", "Content-Type");
     }
